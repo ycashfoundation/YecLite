@@ -49,8 +49,8 @@ bool Settings::isSaplingAddress(QString addr) {
     if (!isValidAddress(addr))
         return false;
 
-    return ( isTestnet() && addr.startsWith("ztestsapling")) ||
-           (!isTestnet() && addr.startsWith("zs"));
+    return ( isTestnet() && addr.startsWith("ytestsapling")) ||
+           (!isTestnet() && addr.startsWith("ys"));
 }
 
 bool Settings::isSproutAddress(QString addr) {
@@ -64,14 +64,14 @@ bool Settings::isZAddress(QString addr) {
     if (!isValidAddress(addr))
         return false;
         
-    return addr.startsWith("z");
+    return addr.startsWith("y");
 }
 
 bool Settings::isTAddress(QString addr) {
     if (!isValidAddress(addr))
         return false;
         
-    return addr.startsWith("t");
+    return addr.startsWith("s");
 }
 
 int Settings::getZcashdVersion() {
@@ -154,7 +154,7 @@ void Settings::saveRestoreTableHeader(QTableView* table, QDialog* d, QString tab
 }
 
 QString Settings::getDefaultServer() {
-    return "https://lightd-main.zecwallet.co:443/";
+    return "http://127.0.0.1:9067/";
 }
 
 void Settings::openAddressInExplorer(QString address) {
@@ -183,9 +183,9 @@ const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (r
 
 QString Settings::getTokenName() {
     if (Settings::getInstance()->isTestnet()) {
-        return "TAZ";
+        return "YAZ";
     } else {
-        return "ZEC";
+        return "YEC";
     }
 }
 
@@ -212,10 +212,10 @@ bool Settings::isValidSaplingPrivateKey(QString pk) {
 }
 
 bool Settings::isValidAddress(QString addr) {
-    QRegExp zcexp("^z[a-z0-9]{94}$",  Qt::CaseInsensitive);
-    QRegExp zsexp("^z[a-z0-9]{77}$",  Qt::CaseInsensitive);
-    QRegExp ztsexp("^ztestsapling[a-z0-9]{76}", Qt::CaseInsensitive);
-    QRegExp texp("^t[a-z0-9]{34}$", Qt::CaseInsensitive);
+    QRegExp zcexp("^y[a-z0-9]{94}$",  Qt::CaseInsensitive);
+    QRegExp zsexp("^y[a-z0-9]{77}$",  Qt::CaseInsensitive);
+    QRegExp ztsexp("^ytestsapling[a-z0-9]{76}", Qt::CaseInsensitive);
+    QRegExp texp("^s[a-z0-9]{34}$", Qt::CaseInsensitive);
 
     return  zcexp.exactMatch(addr)  || texp.exactMatch(addr) || 
             ztsexp.exactMatch(addr) || zsexp.exactMatch(addr);
@@ -232,12 +232,12 @@ QString Settings::paymentURIPretty(PaymentURI uri) {
 PaymentURI Settings::parseURI(QString uri) {
     PaymentURI ans;
 
-    if (!uri.startsWith("zcash:")) {
-        ans.error = "Not a zcash payment URI";
+    if (!uri.startsWith("ycash:")) {
+        ans.error = "Not a ycash payment URI";
         return ans;
     }
 
-    uri = uri.right(uri.length() - QString("zcash:").length());
+    uri = uri.right(uri.length() - QString("ycash:").length());
     
     QRegExp re("([a-zA-Z0-9]+)");
     int pos;
