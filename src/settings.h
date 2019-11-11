@@ -93,7 +93,7 @@ public:
     
     static bool    isValidAddress(QString addr);
 
-    static QString getChainName() { return QString("main"); }
+    static QString getChainName() { return QString("test"); }
 
     static const QString labelRegExp;
 
