@@ -147,11 +147,11 @@ public:
 
         // Command line parser
         QCommandLineParser parser;
-        parser.setApplicationDescription("Shielded desktop light wallet for Zcash");
+        parser.setApplicationDescription("Shielded desktop light wallet for Ycash");
         parser.addHelpOption();
 
         // Positional argument will specify a zcash payment URI
-        parser.addPositionalArgument("zcashURI", "An optional zcash URI to pay");
+        parser.addPositionalArgument("ycashURI", "An optional ycash URI to pay");
 
         parser.process(a);
 
@@ -164,8 +164,8 @@ public:
             return 0;            
         } 
 
-        QCoreApplication::setOrganizationName("zecwallet-org");
-        QCoreApplication::setApplicationName("zecwallet");
+        QCoreApplication::setOrganizationName("ycash-foundation");
+        QCoreApplication::setApplicationName("yeclite");
 
         QString locale = QLocale::system().name();
         locale.truncate(locale.lastIndexOf('_'));   // Get the language code
@@ -205,7 +205,7 @@ public:
         
 
         w = new MainWindow();
-        w->setWindowTitle("Zecwallet Lightclient v" + QString(APP_VERSION));
+        w->setWindowTitle("YecLite v" + QString(APP_VERSION));
 
         // If there was a payment URI on the command line, pay it
         if (parser.positionalArguments().length() > 0) {

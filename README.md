@@ -8,7 +8,7 @@ Zecwallet-Lite is z-Addr first, Sapling compatible wallet lightwallet for Zcash
 ### Building on Linux
 
 ```
-git clone https://github.com/adityapk00/zecwallet-lite.git
+git clone https://github.com/ycashfoundation/YecLite.git
 cd zecwallet-lite
 /path/to/qt5/bin/qmake zecwallet-lite.pro CONFIG+=debug
 make -j$(nproc)
