@@ -4,6 +4,8 @@
 #include "precompiled.h"
 #include "camount.h"
 
+using json = nlohmann::json;
+
 struct Config {
     QString server;
 };
@@ -117,5 +119,16 @@ private:
     
     double  zecPrice          = 0.0;
 };
+
+
+inline bool isJsonResultSuccess(const json& res) {
+    return res.find("result") != res.end() && 
+                    QString::fromStdString(res["result"].get<json::string_t>()) == "success";
+}
+
+inline bool isJsonError(const json& res) {
+    return res.find("error") != res.end();
+}
+
 
 #endif // SETTINGS_H

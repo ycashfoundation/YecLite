@@ -161,8 +161,6 @@ void Controller::getInfoThenRefresh(bool force) {
         bool doUpdate = force || (model->getLatestBlock() != curBlock);
         model->setLatestBlock(curBlock);
 
-        qDebug() << "Refreshing. Full update: " << doUpdate;
-
         // Connected, so display checkmark.
         auto tooltip = Settings::getInstance()->getSettings().server + "\n" + QString::fromStdString(reply.dump());
         QIcon i(":/icons/res/connected.gif");
@@ -177,6 +175,14 @@ void Controller::getInfoThenRefresh(bool force) {
 
         // See if recurring payments needs anything
         Recurring::getInstance()->processPending(main);
+
+        // Check if the wallet is locked/encrypted
+        zrpc->fetchWalletEncryptionStatus([=] (const json& reply) {
+            bool isEncrypted = reply["encrypted"].get<json::boolean_t>();
+            bool isLocked = reply["locked"].get<json::boolean_t>();
+
+            model->setEncryptionStatus(isEncrypted, isLocked);
+        });
 
         if ( doUpdate ) {
             // Something changed, so refresh everything.
@@ -266,6 +272,34 @@ void Controller::processUnspent(const json& reply, QMap<QString, CAmount>* balan
     processFn(reply["pending_utxos"].get<json::array_t>());
 };
 
+void Controller::updateUIBalances() {
+    CAmount balT = getModel()->getBalT();
+    CAmount balZ = getModel()->getBalZ();
+    CAmount balVerified = getModel()->getBalVerified();
+
+    // Reduce the BalanceZ by the pending outgoing amount. We're adding
+    // here because totalPending is already negative for outgoing txns.
+    balZ = balZ + getModel()->getTotalPending();
+
+    CAmount balTotal     = balT + balZ;
+    CAmount balAvailable = balT + balVerified;
+
+    // Balances table
+    ui->balSheilded   ->setText(balZ.toDecimalZECString());
+    ui->balVerified   ->setText(balVerified.toDecimalZECString());
+    ui->balTransparent->setText(balT.toDecimalZECString());
+    ui->balTotal      ->setText(balTotal.toDecimalZECString());
+
+    ui->balSheilded   ->setToolTip(balZ.toDecimalUSDString());
+    ui->balVerified   ->setToolTip(balVerified.toDecimalUSDString());
+    ui->balTransparent->setToolTip(balT.toDecimalUSDString());
+    ui->balTotal      ->setToolTip(balTotal.toDecimalUSDString());
+
+    // Send tab
+    ui->txtAvailableZEC->setText(balAvailable.toDecimalZECString());
+    ui->txtAvailableUSD->setText(balAvailable.toDecimalUSDString());
+}
+
 void Controller::refreshBalances() {    
     if (!zrpc->haveConnection()) 
         return noConnection();
@@ -276,29 +310,18 @@ void Controller::refreshBalances() {
         CAmount balZ        = CAmount::fromqint64(reply["zbalance"].get<json::number_unsigned_t>());
         CAmount balVerified = CAmount::fromqint64(reply["verified_zbalance"].get<json::number_unsigned_t>());
         
-        CAmount balTotal     = balT + balZ;
-        CAmount balAvailable = balT + balVerified;
+        model->setBalT(balT);
+        model->setBalZ(balZ);
+        model->setBalVerified(balVerified);
 
         // This is for the websockets
         AppDataModel::getInstance()->setBalances(balT, balZ);
         
         // This is for the datamodel
+        CAmount balAvailable = balT + balVerified;
         model->setAvailableBalance(balAvailable);
 
-        // Balances table
-        ui->balSheilded   ->setText(balZ.toDecimalZECString());
-        ui->balVerified   ->setText(balVerified.toDecimalZECString());
-        ui->balTransparent->setText(balT.toDecimalZECString());
-        ui->balTotal      ->setText(balTotal.toDecimalZECString());
-
-        ui->balSheilded   ->setToolTip(balZ.toDecimalUSDString());
-        ui->balVerified   ->setToolTip(balVerified.toDecimalUSDString());
-        ui->balTransparent->setToolTip(balT.toDecimalUSDString());
-        ui->balTotal      ->setToolTip(balTotal.toDecimalUSDString());
-
-        // Send tab
-        ui->txtAvailableZEC->setText(balAvailable.toDecimalZECString());
-        ui->txtAvailableUSD->setText(balAvailable.toDecimalUSDString());
+        updateUIBalances();
     });
 
     // 2. Get the UTXOs
@@ -403,9 +426,61 @@ void Controller::refreshTransactions() {
             
         }
 
+        // Calculate the total unspent amount that's pending. This will need to be 
+        // shown in the UI so the user can keep track of pending funds
+        CAmount totalPending;
+        for (auto txitem : txdata) {
+            if (txitem.confirmations == 0) {
+                for (auto item: txitem.items) {
+                    totalPending = totalPending + item.amount;
+                }
+            }
+        }
+        getModel()->setTotalPending(totalPending);
+
+        // Update UI Balance
+        updateUIBalances();
+
         // Update model data, which updates the table view
         transactionsTableModel->replaceData(txdata);        
     });
+}
+
+// If the wallet is encrpyted and locked, we need to unlock it 
+void Controller::unlockIfEncrypted(std::function<void(void)> cb, std::function<void(void)> error) {
+    auto encStatus = getModel()->getEncryptionStatus();
+    if (encStatus.first && encStatus.second) {
+        // Wallet is encrypted and locked. Ask for the password and unlock.
+        QString password = QInputDialog::getText(main, main->tr("Wallet Password"), 
+                            main->tr("Your wallet is encrypted.\nPlease enter your wallet password"), QLineEdit::Password);
+
+        if (password.isEmpty()) {
+            QMessageBox::critical(main, main->tr("Wallet Decryption Failed"),
+                main->tr("Please enter a valid password"),
+                QMessageBox::Ok
+            );
+            error();
+            return;
+        }
+
+        zrpc->unlockWallet(password, [=](json reply) {
+            if (isJsonResultSuccess(reply)) {
+                cb();
+
+                // Refresh the wallet so the encryption status is now in sync.
+                refresh(true);
+            } else {
+                QMessageBox::critical(main, main->tr("Wallet Decryption Failed"),
+                    QString::fromStdString(reply["error"].get<json::string_t>()),
+                    QMessageBox::Ok
+                );
+                error();
+            }
+        });
+    } else {
+        // Not locked, so just call the function
+        cb();
+    }
 }
 
 /**
@@ -433,21 +508,25 @@ void Controller::executeStandardUITransaction(Tx tx) {
 void Controller::executeTransaction(Tx tx, 
         const std::function<void(QString txid)> submitted,
         const std::function<void(QString txid, QString errStr)> error) {
-    // First, create the json params
-    json params = json::array();
-    fillTxJsonParams(params, tx);
-    std::cout << std::setw(2) << params << std::endl;
+    unlockIfEncrypted([=] () {
+        // First, create the json params
+        json params = json::array();
+        fillTxJsonParams(params, tx);
+        std::cout << std::setw(2) << params << std::endl;
 
-    zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
-        if (reply.find("txid") == reply.end()) {
-            error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
-        } else {
-            QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
-            submitted(txid);
-        }
-    },
-    [=](QString errStr) {
-        error("", errStr);
+        zrpc->sendTransaction(QString::fromStdString(params.dump()), [=](const json& reply) {
+            if (reply.find("txid") == reply.end()) {
+                error("", "Couldn't understand Response: " + QString::fromStdString(reply.dump()));
+            } else {
+                QString txid = QString::fromStdString(reply["txid"].get<json::string_t>());
+                submitted(txid);
+            }
+        },
+        [=](QString errStr) {
+            error("", errStr);
+        });
+    }, [=]() {
+        error("", main->tr("Failed to unlock wallet"));
     });
 }
 
