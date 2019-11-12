@@ -11,7 +11,6 @@ Write-Host "[Initializing]"
 Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-binaries-YecLite-v$version.tar.gz
 Remove-Item -Force -ErrorAction Ignore ./artifacts/linux-deb-YecLite-v$version.deb
 Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-binaries-YecLite-v$version.zip
-Remove-Item -Force -ErrorAction Ignore ./artifacts/Windows-installer-YecLite-v$version.msi
 Remove-Item -Force -ErrorAction Ignore ./artifacts/macOS-YecLite-v$version.dmg
 Remove-Item -Force -ErrorAction Ignore ./artifacts/signatures-v$version.tar.gz
 
@@ -57,43 +56,12 @@ New-Item artifacts -itemtype directory -Force         | Out-Null
 scp    ${server}:/tmp/zqwbuild/artifacts/* artifacts/ | Out-Null
 scp -r ${server}:/tmp/zqwbuild/release .              | Out-Null
 
-Write-Host -NoNewline "Building Installer....."
-ssh $winserver "Remove-Item -Path zqwbuild -Recurse"   | Out-Null
-ssh $winserver "New-Item zqwbuild -itemtype directory" | Out-Null
-
-# Note: For some mysterious reason, we can't seem to do a scp from here to windows machine. 
-# So, we'll ssh to windows, and execute an scp command to pull files from here to there.
-# Same while copying the built msi. A straight scp pull from windows to here doesn't work,
-# so we ssh to windows, and then scp push the file to here.
-$myhostname = (ipconfig getifaddr en0) | Out-String -NoNewline
-# Powershell seems not to be able to remove this directory for some reason!
-# Remove-Item -Path /tmp/zqwbuild -Recurse -ErrorAction Ignore | Out-Null
-bash "rm -rf /tmp/zqwbuild" 2>&1 | Out-Null
-New-Item    -Path /tmp/zqwbuild -itemtype directory -Force | Out-Null
-Copy-Item src     /tmp/zqwbuild/ -Recurse -Force 
-Copy-Item res     /tmp/zqwbuild/ -Recurse -Force
-Copy-Item release /tmp/zqwbuild/ -Recurse -Force
-
-# Remove some unnecessary stuff from the tmp directory to speed up copying
-Remove-Item -Recurse -ErrorAction Ignore /tmp/zqwbuild/res/libsodium
-
-ssh $winserver "scp -r ${myhostname}:/tmp/zqwbuild/* zqwbuild/"
-ssh $winserver "cd zqwbuild ; src/scripts/mkwininstaller.ps1 -version $version" >/dev/null
-if (!$?) {
-    Write-Output "[Error]"
-    exit 1;
-}
-ssh $winserver "scp zqwbuild/artifacts/* ${myhostname}:/tmp/zqwbuild/"
-Copy-Item /tmp/zqwbuild/*.msi artifacts/
-Write-Host "[OK]"
-
 # Finally, test to make sure all files exist
 Write-Host -NoNewline "Checking Build........."
 if (! (Test-Path ./artifacts/linux-binaries-YecLite-v$version.tar.gz) -or
     ! (Test-Path ./artifacts/linux-deb-YecLite-v$version.deb) -or
     ! (Test-Path ./artifacts/Windows-binaries-YecLite-v$version.zip) -or
     ! (Test-Path ./artifacts/macOS-YecLite-v$version.dmg) -or 
-    ! (Test-Path ./artifacts/Windows-installer-YecLite-v$version.msi) ) {
         Write-Host "[Error]"
         exit 1;
     }
