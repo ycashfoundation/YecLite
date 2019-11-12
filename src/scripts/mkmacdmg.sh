@@ -12,11 +12,6 @@ case $key in
     shift # past argument
     shift # past value
     ;;
-    -c|--certificate)
-    CERTIFICATE="$2"
-    shift # past argument
-    shift # past value
-    ;;
     -v|--version)
     APP_VERSION="$2"
     shift # past argument
@@ -32,11 +27,6 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 
 if [ -z $QT_PATH ]; then 
     echo "QT_PATH is not set. Please set it to the base directory of Qt"; 
-    exit 1; 
-fi
-
-if [ -z $CERTIFICATE ]; then 
-    echo "CERTIFICATE is not set. Please set it the name of the MacOS developer certificate to sign the binary with"; 
     exit 1; 
 fi
 
