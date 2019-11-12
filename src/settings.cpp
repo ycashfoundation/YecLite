@@ -154,30 +154,31 @@ void Settings::saveRestoreTableHeader(QTableView* table, QDialog* d, QString tab
 }
 
 QString Settings::getDefaultServer() {
-    return "http://127.0.0.1:9067/";
+    return "https://lightwalletd.ycash.xyz:443/";
 }
 
 void Settings::openAddressInExplorer(QString address) {
     QString url;
     if (Settings::getInstance()->isTestnet()) {
-        url = "https://chain.so/address/ZECTEST/" + address;
+        // For ycash, this is not yet supported
+        return;
     } else {
-        url = "https://zcha.in/accounts/" + address;
+        url = "https://yec.zcha.in/accounts/" + address;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
 
-void Settings::openTxInExplorer(QString txid) {
+void Settings::openTxInExplorer(QString txid) {   
     QString url;
     if (Settings::getInstance()->isTestnet()) {
-        url = "https://chain.so/tx/ZECTEST/" + txid;
+        // For ycash, this is not yet supported
+        return;
     }
     else {
-        url = "https://zcha.in/transactions/" + txid;
+        url = "https://yec.zcha.in/transactions/" + txid;
     }
     QDesktopServices::openUrl(QUrl(url));
 }
-
 
 const QString Settings::txidStatusMessage = QString(QObject::tr("Tx submitted (right click to copy) txid:"));
 
