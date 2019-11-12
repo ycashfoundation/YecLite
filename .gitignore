@@ -13,12 +13,12 @@ src/ui_*.h
 src/precompiled.h.cpp
 .qmake.stash
 yeclite
-Zecwallet-Lite.app
-zecwallet-lite-mingw*
-zecwallet-lite.vcxproj*
+YecLite.app
+YecLite-mingw*
+YecLite.vcxproj*
 zecwallet.vcxproj*
-zecwallet-lite.sln
-zecwallet-lite.pro.user
+YecLite.sln
+YecLite.pro.user
 /Makefile
 /Makefile.*
 qrc_application.cpp
@@ -37,6 +37,6 @@ IDEWorkspaceChecks.plist
 *.sln
 node_modules
 zec-qt-wallet.pro.user.4.10-pre1
-zecwallet-lite
-zecwallet-lite_plugin_import.cpp
-zecwallet-lite_resource.rc
+YecLite
+YecLite_plugin_import.cpp
+YecLite_resource.rc

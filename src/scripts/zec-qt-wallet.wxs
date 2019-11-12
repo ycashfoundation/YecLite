@@ -9,7 +9,7 @@
         <Icon Id="zecwalletliteicon.exe" SourceFile="res/icon.ico"/>
         <Property Id="ARPPRODUCTICON" Value="zecwalletliteicon.exe" />
 
-		<Feature Id="ProductFeature" Title="zecwallet-lite" Level="1">
+		<Feature Id="ProductFeature" Title="YecLite" Level="1">
 			<ComponentGroupRef Id="ProductComponents" /> 
             <ComponentRef Id="ProgramMenuDir"/>
 		</Feature>
@@ -37,13 +37,13 @@
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="zecwallet-lite" />
+				<Directory Id="INSTALLFOLDER" Name="YecLite" />
 			</Directory>
             <Directory Id="ProgramMenuFolder" Name="Programs">
-                <Directory Id="ApplicationProgramsFolder" Name="zecwallet-lite">
+                <Directory Id="ApplicationProgramsFolder" Name="YecLite">
                     <Component Id="ProgramMenuDir" Guid="0D560F5A-53E0-4E7E-AEEA-15A26995505E">
                         <RemoveFolder Id="ProgramMenuDir" On="uninstall"/>
-                        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\zecwallet-lite\WixSetup"
+                        <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\YecLite\WixSetup"
                                        Type="integer" Value="1" Name="installed" KeyPath="yes" />
                     </Component>
                 </Directory>
@@ -55,7 +55,7 @@
 	<Fragment>
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			<Component Id="ProductComponent" Guid="0D210F5A-53E0-4E7E-CAAD-15A26995505E">
-                <File Source="zecwallet-lite.exe" KeyPath="yes">
+                <File Source="YecLite.exe" KeyPath="yes">
                     <Shortcut Id="startMenuShotcut" Advertise="yes" Directory="ApplicationProgramsFolder"
                         Name="ZecWallet" WorkingDirectory="INSTALLFOLDER" Icon="zecwalletliteicon.exe" >
                     </Shortcut>
@@ -66,10 +66,10 @@
                     <RegistryValue Type="string" Name="URL Protocol" Value=""/>
                     <RegistryValue Type="string" Value="URL:zcash URI protocol"/>
                     <RegistryKey Key="DefaultIcon">
-                    <RegistryValue Type="string" Value="zecwallet-lite.exe" />
+                    <RegistryValue Type="string" Value="YecLite.exe" />
                     </RegistryKey>
                     <RegistryKey Key="shell\open\command">
-                    <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]zecwallet-lite.exe&quot; &quot;%1&quot;" />
+                    <RegistryValue Type="string" Value="&quot;[INSTALLFOLDER]YecLite.exe&quot; &quot;%1&quot;" />
                     </RegistryKey>
                 </RegistryKey>
 			</Component>

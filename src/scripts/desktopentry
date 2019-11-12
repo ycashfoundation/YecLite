@@ -1,12 +1,12 @@
 [Desktop Entry]
-Name=Zecwallet-Lite
+Name=YecLite
 Comment=Lightclient UI wallet for Zcash
 GenericName=Wallet
-Exec=/usr/local/bin/zecwallet-lite %u
+Exec=/usr/local/bin/yeclite %u
 Icon=zecwallet-lite.xpm
 Type=Application
 StartupNotify=true
-StartupWMClass=zecwallet-lite
+StartupWMClass=YecLite
 Categories=Utility;
 MimeType=x-scheme-handler/zcash;
 Keywords=zecwallet;

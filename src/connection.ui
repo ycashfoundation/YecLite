@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ZecWallet-Lite</string>
+   <string>YecLite</string>
   </property>
   <property name="modal">
    <bool>true</bool>

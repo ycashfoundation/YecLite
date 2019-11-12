@@ -9,7 +9,7 @@ if [ -z $PREV_VERSION ]; then echo "PREV_VERSION is not set"; exit 1; fi
 
 echo -n "Version files.........."
 # Replace the version number in the .pro file so it gets picked up everywhere
-sed -i "s/${PREV_VERSION}/${APP_VERSION}/g" zecwallet-lite.pro > /dev/null
+sed -i "s/${PREV_VERSION}/${APP_VERSION}/g" yeclite.pro > /dev/null
 
 # Also update it in the README.md
 sed -i "s/${PREV_VERSION}/${APP_VERSION}/g" README.md > /dev/null
@@ -26,7 +26,7 @@ echo "[Building on" `lsb_release -r`"]"
 
 echo -n "Configuring............"
 QT_STATIC=$QT_STATIC bash src/scripts/dotranslations.sh >/dev/null
-$QT_STATIC/bin/qmake zecwallet-lite.pro -spec linux-clang CONFIG+=release > /dev/null
+$QT_STATIC/bin/qmake yeclite.pro -spec linux-clang CONFIG+=release > /dev/null
 echo "[OK]"
 
 
@@ -40,7 +40,7 @@ echo "[OK]"
 
 # Test for Qt
 echo -n "Static link............"
-if [[ $(ldd zecwallet-lite | grep -i "Qt") ]]; then
+if [[ $(ldd yeclite | grep -i "Qt") ]]; then
     echo "FOUND QT; ABORT"; 
     exit 1
 fi
@@ -48,25 +48,25 @@ echo "[OK]"
 
 
 echo -n "Packaging.............."
-mkdir bin/zecwallet-lite-v$APP_VERSION > /dev/null
-strip zecwallet-lite
+mkdir bin/YecLite-v$APP_VERSION > /dev/null
+strip yeclite
 
-cp zecwallet-lite                 bin/zecwallet-lite-v$APP_VERSION > /dev/null
-cp README.md                      bin/zecwallet-lite-v$APP_VERSION > /dev/null
-cp LICENSE                        bin/zecwallet-lite-v$APP_VERSION > /dev/null
+cp yeclite                        bin/YecLite-v$APP_VERSION > /dev/null
+cp README.md                      bin/YecLite-v$APP_VERSION > /dev/null
+cp LICENSE                        bin/YecLite-v$APP_VERSION > /dev/null
 
-cd bin && tar czf linux-zecwallet-lite-v$APP_VERSION.tar.gz zecwallet-lite-v$APP_VERSION/ > /dev/null
+cd bin && tar czf linux-YecLite-v$APP_VERSION.tar.gz YecLite-v$APP_VERSION/ > /dev/null
 cd .. 
 
 mkdir artifacts >/dev/null 2>&1
-cp bin/linux-zecwallet-lite-v$APP_VERSION.tar.gz ./artifacts/linux-binaries-zecwallet-lite-v$APP_VERSION.tar.gz
+cp bin/linux-YecLite-v$APP_VERSION.tar.gz ./artifacts/linux-binaries-YecLite-v$APP_VERSION.tar.gz
 echo "[OK]"
 
 
-if [ -f artifacts/linux-binaries-zecwallet-lite-v$APP_VERSION.tar.gz ] ; then
+if [ -f artifacts/linux-binaries-YecLite-v$APP_VERSION.tar.gz ] ; then
     echo -n "Package contents......."
     # Test if the package is built OK
-    if tar tf "artifacts/linux-binaries-zecwallet-lite-v$APP_VERSION.tar.gz" | wc -l | grep -q "4"; then 
+    if tar tf "artifacts/linux-binaries-YecLite-v$APP_VERSION.tar.gz" | wc -l | grep -q "4"; then 
         echo "[OK]"
     else
         echo "[ERROR]"
@@ -78,23 +78,23 @@ else
 fi
 
 echo -n "Building deb..........."
-debdir=bin/deb/zecwallet-lite-v$APP_VERSION
+debdir=bin/deb/YecLite-v$APP_VERSION
 mkdir -p $debdir > /dev/null
 mkdir    $debdir/DEBIAN
 mkdir -p $debdir/usr/local/bin
 
 cat src/scripts/control | sed "s/RELEASE_VERSION/$APP_VERSION/g" > $debdir/DEBIAN/control
 
-cp zecwallet-lite                   $debdir/usr/local/bin/
+cp YecLite                   $debdir/usr/local/bin/
 
 mkdir -p $debdir/usr/share/pixmaps/
 cp res/zecwallet-lite.xpm           $debdir/usr/share/pixmaps/
 
 mkdir -p $debdir/usr/share/applications
-cp src/scripts/desktopentry    $debdir/usr/share/applications/zecwallet-lite.desktop
+cp src/scripts/desktopentry    $debdir/usr/share/applications/YecLite.desktop
 
 dpkg-deb --build $debdir >/dev/null
-cp $debdir.deb                 artifacts/linux-deb-zecwallet-lite-v$APP_VERSION.deb
+cp $debdir.deb                 artifacts/linux-deb-YecLite-v$APP_VERSION.deb
 echo "[OK]"
 
 
@@ -122,26 +122,26 @@ echo "[OK]"
 echo -n "Building..............."
 # Build the lib first
 cd lib && make winrelease && cd ..
-x86_64-w64-mingw32.static-qmake-qt5 zecwallet-lite.pro CONFIG+=release > /dev/null
+x86_64-w64-mingw32.static-qmake-qt5 yeclite.pro CONFIG+=release > /dev/null
 make -j32 > /dev/null
 echo "[OK]"
 
 
 echo -n "Packaging.............."
-mkdir release/zecwallet-lite-v$APP_VERSION  
-cp release/zecwallet-lite.exe          release/zecwallet-lite-v$APP_VERSION 
-cp README.md                          release/zecwallet-lite-v$APP_VERSION 
-cp LICENSE                            release/zecwallet-lite-v$APP_VERSION 
-cd release && zip -r Windows-binaries-zecwallet-lite-v$APP_VERSION.zip zecwallet-lite-v$APP_VERSION/ > /dev/null
+mkdir release/YecLite-v$APP_VERSION  
+cp release/yeclite.exe                release/YecLite-v$APP_VERSION 
+cp README.md                          release/YecLite-v$APP_VERSION 
+cp LICENSE                            release/YecLite-v$APP_VERSION 
+cd release && zip -r Windows-binaries-YecLite-v$APP_VERSION.zip YecLite-v$APP_VERSION/ > /dev/null
 cd ..
 
 mkdir artifacts >/dev/null 2>&1
-cp release/Windows-binaries-zecwallet-lite-v$APP_VERSION.zip ./artifacts/
+cp release/Windows-binaries-YecLite-v$APP_VERSION.zip ./artifacts/
 echo "[OK]"
 
-if [ -f artifacts/Windows-binaries-zecwallet-lite-v$APP_VERSION.zip ] ; then
+if [ -f artifacts/Windows-binaries-YecLite-v$APP_VERSION.zip ] ; then
     echo -n "Package contents......."
-    if unzip -l "artifacts/Windows-binaries-zecwallet-lite-v$APP_VERSION.zip" | wc -l | grep -q "9"; then 
+    if unzip -l "artifacts/Windows-binaries-YecLite-v$APP_VERSION.zip" | wc -l | grep -q "9"; then 
         echo "[OK]"
     else
         echo "[ERROR]"

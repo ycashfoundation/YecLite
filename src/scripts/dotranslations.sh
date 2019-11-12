@@ -6,7 +6,7 @@ if [ -z $QT_STATIC ]; then
 fi
 
 rm -f res/*.qm
-$QT_STATIC/bin/lrelease zecwallet-lite.pro
+$QT_STATIC/bin/lrelease yeclite.pro
 
 # Then update the qt base translations. First, get all languages
 ls res/*.qm | awk -F '[_.]' '{print $4}' | while read -r language ; do 
