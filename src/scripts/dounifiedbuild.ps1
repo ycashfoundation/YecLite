@@ -2,7 +2,7 @@
 param (
     [Parameter(Mandatory=$true)][string]$version,
     [Parameter(Mandatory=$true)][string]$prev,
-    [Parameter(Mandatory=$true)][string]$server,
+    [Parameter(Mandatory=$true)][string]$server
 )
 
 Write-Host "[Initializing]"
@@ -59,7 +59,7 @@ Write-Host -NoNewline "Checking Build........."
 if (! (Test-Path ./artifacts/linux-binaries-YecLite-v$version.tar.gz) -or
     ! (Test-Path ./artifacts/linux-deb-YecLite-v$version.deb) -or
     ! (Test-Path ./artifacts/Windows-binaries-YecLite-v$version.zip) -or
-    ! (Test-Path ./artifacts/macOS-YecLite-v$version.dmg) -or 
+    ! (Test-Path ./artifacts/macOS-YecLite-v$version.dmg)) {
         Write-Host "[Error]"
         exit 1;
     }
