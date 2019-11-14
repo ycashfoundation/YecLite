@@ -42,8 +42,8 @@ public:
     bool    isSyncing();
     void    setSyncing(bool syncing);
 
-    int     getZcashdVersion();
-    void    setZcashdVersion(int version);
+    QString getZcashdVersion();
+    void    setZcashdVersion(QString version);
     
     void    setUseEmbedded(bool r) { _useEmbedded = r; }
     bool    useEmbedded() { return _useEmbedded; }
@@ -95,7 +95,7 @@ public:
     
     static bool    isValidAddress(QString addr);
 
-    static QString getChainName() { return QString("main"); }
+    static QString getDefaultChainName() { return QString("main"); }
 
     static const QString labelRegExp;
 
@@ -113,7 +113,7 @@ private:
     bool    _isTestnet        = false;
     bool    _isSyncing        = false;
     int     _blockNumber      = 0;
-    int     _zcashdVersion    = 0;
+    QString _zcashdVersion    = 0;
     bool    _useEmbedded      = false;
     bool    _headless         = false;
     

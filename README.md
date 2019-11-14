@@ -1,4 +1,4 @@
-YecLite is z-Addr first, Sapling compatible wallet lightwallet for Zcash. It has full support for all Zcash features:
+YecLite is z-Addr first,  Sapling compatible lightwallet client for Ycash. It has full support for all Zcash features:
 - Send + Receive fully shielded transactions
 - Supports transparent addresses and transactions
 - Full support for incoming and outgoing memos
