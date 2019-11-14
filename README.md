@@ -22,7 +22,7 @@ YecLite does automatic note and utxo management, which means it doesn't allow yo
     * When sending an outgoing transaction to a shielded address, YecLite can decide to use the transaction to additionally shield your transparent funds (i.e., send your transparent funds to your own shielded address in the same transaction)
 
 ## Compiling from source
-* ZecWallet is written in C++ 14, and can be compiled with g++/clang++/visual c++. 
+* YecLite is written in C++ 14, and can be compiled with g++/clang++/visual c++. 
 * It also depends on Qt5, which you can get from [here](https://www.qt.io/download). 
 * You'll need Rust v1.37 +
 

@@ -9,5 +9,5 @@ StartupNotify=true
 StartupWMClass=YecLite
 Categories=Utility;
 MimeType=x-scheme-handler/zcash;
-Keywords=zecwallet;
+Keywords=yeclite;
 
