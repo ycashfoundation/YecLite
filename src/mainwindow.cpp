@@ -682,7 +682,7 @@ void MainWindow::exportSeed() {
         // Wire up save button
         QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
             QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                            "yeclite_seed.txt");
+                            "ycash_lite_seed.txt");
             QFile file(fileName);
             if (!file.open(QIODevice::WriteOnly)) {
                 QMessageBox::information(this, tr("Unable to open file"), file.errorString());
