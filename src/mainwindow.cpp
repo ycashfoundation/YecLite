@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	    
     ui->setupUi(this);
-    logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("zec-qt-wallet.log"));
+    logger = new Logger(this, QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath("yeclite.log"));
 
     // Status Bar
     setupStatusBar();
@@ -682,7 +682,7 @@ void MainWindow::exportSeed() {
         // Wire up save button
         QObject::connect(pui.buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, [=] () {
             QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                            "zcash-seed.txt");
+                            "yeclite_seed.txt");
             QFile file(fileName);
             if (!file.open(QIODevice::WriteOnly)) {
                 QMessageBox::information(this, tr("Unable to open file"), file.errorString());
