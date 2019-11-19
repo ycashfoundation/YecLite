@@ -320,14 +320,16 @@ void Controller::refreshBalances() {
         
         model->setBalT(balT);
         model->setBalZ(balZ);
-        model->setBalVerified(balVerified);
-
+        
         // This is for the websockets
         AppDataModel::getInstance()->setBalances(balT, balZ);
         
         // This is for the datamodel
         CAmount balAvailable = balT + balVerified;
         model->setAvailableBalance(balAvailable);
+
+        // For Ycash, the verified balance is the same as balance available.
+        model->setBalVerified(balAvailable);
 
         updateUIBalances();
     });
