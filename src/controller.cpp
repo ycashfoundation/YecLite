@@ -290,7 +290,6 @@ void Controller::updateUIBalances() {
     balZ = balZ + getModel()->getTotalPending();
 
     CAmount balTotal     = balT + balZ;
-    CAmount balAvailable = balT + balVerified;
 
     // Balances table
     ui->balSheilded   ->setText(balZ.toDecimalZECString());
@@ -304,8 +303,8 @@ void Controller::updateUIBalances() {
     ui->balTotal      ->setToolTip(balTotal.toDecimalUSDString());
 
     // Send tab
-    ui->txtAvailableZEC->setText(balAvailable.toDecimalZECString());
-    ui->txtAvailableUSD->setText(balAvailable.toDecimalUSDString());
+    ui->txtAvailableZEC->setText(balVerified.toDecimalZECString());
+    ui->txtAvailableUSD->setText(balVerified.toDecimalUSDString());
 }
 
 void Controller::refreshBalances() {    
