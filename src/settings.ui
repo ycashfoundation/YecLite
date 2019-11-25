@@ -26,7 +26,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -119,7 +119,7 @@
        <item row="2" column="0" colspan="2">
         <widget class="QCheckBox" name="chkFetchPrices">
          <property name="text">
-          <string>Fetch ZEC / USD prices</string>
+          <string>Fetch YEC / USD prices</string>
          </property>
         </widget>
        </item>
@@ -182,7 +182,7 @@
        <item row="3" column="0" colspan="2">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>Connect to the internet to fetch ZEC prices</string>
+          <string>Connect to the internet to fetch YEC prices</string>
          </property>
         </widget>
        </item>
