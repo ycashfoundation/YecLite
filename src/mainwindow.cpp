@@ -415,12 +415,6 @@ void MainWindow::setupSettingsModal() {
         // Connection tab by default
         settings.tabWidget->setCurrentIndex(0);
 
-        // Enable the troubleshooting options only if using embedded zcashd
-        if (!rpc->isEmbedded()) {
-            settings.chkRescan->setEnabled(false);
-            settings.chkRescan->setToolTip(tr("You're using an external zcashd. Please restart zcashd with -rescan"));
-        }
-
         if (settingsDialog.exec() == QDialog::Accepted) {
             // Check for updates
             Settings::getInstance()->setCheckForUpdates(settings.chkCheckUpdates->isChecked());
