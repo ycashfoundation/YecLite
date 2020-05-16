@@ -621,7 +621,7 @@ void Controller::refreshZECPrice() {
     if (!zrpc->haveConnection()) 
         return noConnection();
 
-    QUrl cmcURL("https://api.coinmarketcap.com/v1/ticker/");
+    QUrl cmcURL("https://api.coingecko.com/api/v3/simple/price?ids=ycash&vs_currencies=USD");
 
     QNetworkRequest req;
     req.setUrl(cmcURL);
@@ -653,18 +653,23 @@ void Controller::refreshZECPrice() {
                 return;
             }
 
-            for (const json& item : parsed.get<json::array_t>()) {
-                if (item["symbol"].get<json::string_t>() == Settings::getTokenName().toStdString()) {
-                    QString price = QString::fromStdString(item["price_usd"].get<json::string_t>());
-                    qDebug() << Settings::getTokenName() << " Price=" << price;
-                    Settings::getInstance()->setZECPrice(price.toDouble());
+            const json& ycash = parsed["ycash"].get<json::object_t>();
+            double price = ycash["usd"].get<json::number_float_t>();
+            qDebug() << Settings::getTokenName() << " Price=" << price;
+            Settings::getInstance()->setZECPrice(price);
 
-                    return;
-                }
-            }
+            // for (const json& item : parsed.get<json::array_t>()) {
+            //     if (item["symbol"].get<json::string_t>() == Settings::getTokenName().toStdString()) {
+            //         QString price = QString::fromStdString(item["price_usd"].get<json::string_t>());
+            //         qDebug() << Settings::getTokenName() << " Price=" << price;
+            //         Settings::getInstance()->setZECPrice(price.toDouble());
+
+            //         return;
+            //     }
+            // }
         } catch (...) {
             // If anything at all goes wrong, just set the price to 0 and move on.
-            qDebug() << QString("Caught something nasty");
+            qDebug() << QString("Caught something nasty trying to get the price");
         }
 
         // If nothing, then set the price to 0;
