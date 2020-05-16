@@ -100,7 +100,7 @@ pub extern fn litelib_initialize_new_from_phrase(dangerous: bool, server: *const
         }
     };
 
-    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday) {
+    let lightclient = match LightClient::new_from_phrase(seed_str, &config, birthday, false) {
         Ok(l) => l,
         Err(e) => {
             let e_str = CString::new(format!("Error: {}", e)).unwrap();
